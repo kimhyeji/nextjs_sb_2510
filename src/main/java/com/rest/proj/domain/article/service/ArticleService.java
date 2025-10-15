@@ -26,13 +26,7 @@ public class ArticleService {
         return articleRepository.findAll();
     }
 
-    public Article getArticle(Long id) {
-        Optional<Article> oq = articleRepository.findById(id);
-
-        if ( oq.isEmpty() ) {
-            return null;
-        }
-
-        return oq.get();
+    public Optional<Article> getArticle(Long id) {
+        return articleRepository.findById(id);
     }
 }
