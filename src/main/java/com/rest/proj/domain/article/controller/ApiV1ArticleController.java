@@ -3,6 +3,7 @@ package com.rest.proj.domain.article.controller;
 import com.rest.proj.domain.article.entity.Article;
 import com.rest.proj.domain.article.service.ArticleService;
 import com.rest.proj.global.rsdata.RsData;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -59,11 +60,23 @@ public class ApiV1ArticleController {
         private String content;
     }
 
-    @PostMapping("")
-    public RsData<Article> write(@RequestBody WriteRequest writeRequest) {
-        articleService.create(writeRequest.getSubject(), writeRequest.getContent());
-        System.out.println(writeRequest.getSubject());
+    @Getter
+    @AllArgsConstructor
+    public static class WriteResponse {
+        private final Article article;
 
-        return RsData.of("","");
+    }
+
+    @PostMapping("")
+    public RsData<WriteResponse> write(@Valid @RequestBody WriteRequest writeRequest) {
+        RsData<Article> writeRs = articleService.create(writeRequest.getSubject(), writeRequest.getContent());
+
+        if ( writeRs.isFail() ) return (RsData) writeRs;
+
+        return RsData.of(
+                writeRs.getResultCode(),
+                writeRs.getMsg(),
+                new WriteResponse(writeRs.getData())
+        );
     }
 }
