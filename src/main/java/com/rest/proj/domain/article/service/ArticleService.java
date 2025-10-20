@@ -4,6 +4,7 @@ import com.rest.proj.domain.article.entity.Article;
 import com.rest.proj.domain.article.repository.ArticleRepository;
 import com.rest.proj.global.rsdata.RsData;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -37,5 +38,21 @@ public class ArticleService {
 
     public Optional<Article> getArticle(Long id) {
         return articleRepository.findById(id);
+    }
+
+    public Optional<Article> findById(Long id) {
+        return articleRepository.findById(id);
+    }
+
+    public RsData<Article> modify(Article article, @NotBlank String subject, @NotBlank String content) {
+        article.setSubject(subject);
+        article.setContent(content);
+        articleRepository.save(article);
+
+        return RsData.of(
+                "S-3",
+                "%d번 게시물이 수정되었습니다.".formatted(article.getId()),
+                article
+        );
     }
 }
