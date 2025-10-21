@@ -3,6 +3,9 @@ package com.rest.proj.domain.member.service;
 import com.rest.proj.domain.member.entity.Member;
 import com.rest.proj.domain.member.repository.MemberRepository;
 import com.rest.proj.global.jwt.JwtProvider;
+import com.rest.proj.global.rsdata.RsData;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +27,14 @@ public class MemberService {
         return member;
     }
 
-    public void authAndMakeTokens(String username, String password) {
+    @AllArgsConstructor
+    @Getter
+    public static class AuthAndMakeTokensResponseBody {
+        private Member member;
+        private String accessToken;
+    }
+
+    public RsData<AuthAndMakeTokensResponseBody> authAndMakeTokens(String username, String password) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
 
@@ -32,5 +42,7 @@ public class MemberService {
         String accessToken = jwtProvider.genToken(member, 60 * 60 * 5);
 
         System.out.println("accessToken : " + accessToken);
+
+        return RsData.of("200-1", "로그인 성공", new AuthAndMakeTokensResponseBody(member, accessToken));
     }
 }
