@@ -17,6 +17,22 @@ export default function Article() {
       .catch((err) => console.error(err));
   };
 
+  const handleDelete = async (id) => {
+    const response = await fetch(
+      `http://localhost:8090/api/v1/articles/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (response.ok) {
+      alert("success");
+      fetchArticles();
+    } else {
+      alert("fail");
+    }
+  };
+
   return (
     <>
       <ArticleForm fetchArticles={fetchArticles} />
@@ -31,6 +47,7 @@ export default function Article() {
               {article.id} /
               <Link href={`/article/${article.id}`}>{article.subject}</Link> /
               {article.createdDate}
+              <button onClick={() => handleDelete(article.id)}>삭제</button>
             </li>
           ))}
         </ul>
@@ -65,7 +82,6 @@ function ArticleForm({ fetchArticles }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setArticle({ ...article, [name]: value });
-    // console.log({ ...article, [name]: value });
   };
 
   return (
@@ -92,7 +108,6 @@ function ArticleForm({ fetchArticles }) {
           />
         </label>
         <input type="submit" value="등록" />
-        {/* <button type="submit">등록</button> */}
       </form>
     </>
   );
