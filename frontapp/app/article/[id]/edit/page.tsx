@@ -1,10 +1,11 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 export default function ArticleEdit() {
   const params = useParams();
+  const router = useRouter();
   const [article, setArticle] = useState({ subject: "", content: "" });
 
   useEffect(() => {
@@ -34,6 +35,7 @@ export default function ArticleEdit() {
 
     if (response.ok) {
       alert("update success");
+      router.push(`/article/${params.id}`);
     } else {
       alert("update fail");
     }
