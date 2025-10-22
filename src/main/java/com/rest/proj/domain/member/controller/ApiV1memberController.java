@@ -10,10 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/members")
@@ -34,26 +31,21 @@ public class ApiV1memberController {
     public static class LoginResponseBody {
         private MemberDto memberDto;
     }
-    
+
     @PostMapping("/login")
     public RsData<LoginResponseBody> login(@Valid @RequestBody LoginRequestBody loginRequestBody, HttpServletResponse resp) {
         // username, password => accessToken
         RsData<MemberService.AuthAndMakeTokensResponseBody> authAndMakeTokensRs = memberService.authAndMakeTokens(loginRequestBody.getUsername(), loginRequestBody.getPassword());
 
-        ResponseCookie cookie = ResponseCookie.from("accessToken", authAndMakeTokensRs.getData().getAccessToken())
-            .path("/")
-            .sameSite("None")
-            .secure(true)
-            .httpOnly(true)
-            .build();
+        ResponseCookie cookie = ResponseCookie.from("accessToken", authAndMakeTokensRs.getData().getAccessToken()).path("/").sameSite("None").secure(true).httpOnly(true).build();
 
         resp.addHeader("Set-Cookie", cookie.toString());
 
-        return RsData.of(
-                authAndMakeTokensRs.getResultCode(),
-                authAndMakeTokensRs.getMsg(),
-                new LoginResponseBody(new MemberDto(authAndMakeTokensRs.getData().getMember()))
-                );
+        return RsData.of(authAndMakeTokensRs.getResultCode(), authAndMakeTokensRs.getMsg(), new LoginResponseBody(new MemberDto(authAndMakeTokensRs.getData().getMember())));
     }
 
+    @GetMapping("/me")
+    public String me() {
+        return "내 정보";
+    }
 }
