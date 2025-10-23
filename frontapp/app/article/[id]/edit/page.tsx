@@ -1,5 +1,6 @@
 "use client";
 
+import api from "@/app/utils/api";
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -22,23 +23,14 @@ export default function ArticleEdit() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch(
-      `http://localhost:8090/api/v1/articles/${params.id}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(article),
-      }
-    );
-
-    if (response.ok) {
-      alert("update success");
-      router.push(`/article/${params.id}`);
-    } else {
-      alert("update fail");
-    }
+    await api
+      .patch(`/articles/${params.id}`, article)
+      .then(function (res) {
+        alert("seccess");
+      })
+      .catch(function (err) {
+        alert("fail");
+      });
   };
 
   const handleChange = (e) => {

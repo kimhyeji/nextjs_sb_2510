@@ -3,17 +3,18 @@
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import api from "@/app/utils/api";
 
 export default function ArticleDetail() {
   const params = useParams();
   const [article, setArticle] = useState({});
 
   useEffect(() => {
-    fetch(`http://localhost:8090/api/v1/articles/${params.id}`)
-      .then((result) => result.json())
-      .then((result) => setArticle(result.data.article))
-      .catch((err) => console.error(err));
-  });
+    api
+      .get(`/articles/${params.id}`)
+      .then((response) => setArticle(response.data.data.article))
+      .catch((err) => console.log(err));
+  }, []);
 
   return (
     <>
