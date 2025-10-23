@@ -73,4 +73,16 @@ public class Rq {
     private boolean isLogout() {
         return !isLogin();
     }
+
+    public void removeCrossDomainCookie(String tokenName) {
+        ResponseCookie cookie = ResponseCookie.from(tokenName, null)
+                .path("/")
+                .maxAge(0)
+                .sameSite("None")
+                .secure(true)
+                .httpOnly(true)
+                .build();
+
+        resp.addHeader("Set-Cookie", cookie.toString());
+    }
 }
