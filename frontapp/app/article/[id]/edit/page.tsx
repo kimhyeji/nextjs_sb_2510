@@ -14,10 +14,10 @@ export default function ArticleEdit() {
   }, []);
 
   const fetchArticle = () => {
-    fetch(`http://localhost:8090/api/v1/articles/${params.id}`)
-      .then((result) => result.json())
-      .then((result) => setArticle(result.data.article))
-      .catch((err) => console.error(err));
+    api
+      .get(`/articles/${params.id}`)
+      .then((response) => setArticle(response.data.data.article))
+      .catch((err) => console.log(err));
   };
 
   const handleSubmit = async (e) => {
@@ -27,6 +27,7 @@ export default function ArticleEdit() {
       .patch(`/articles/${params.id}`, article)
       .then(function (res) {
         alert("seccess");
+        router.push(`/article/${params.id}`);
       })
       .catch(function (err) {
         alert("fail");

@@ -13,13 +13,13 @@ export default function Article() {
 
   const fetchArticles = () => {
     api
-      .get("/articles/")
+      .get("/articles")
       .then((response) => setArticles(response.data.data.articles))
       .catch((err) => console.log(err));
   };
 
   const handleDelete = async (id) => {
-    await api.delete(`/articles/${id}`);
+    await api.delete(`/articles/${id}`).then(() => fetchArticles());
   };
 
   return (
@@ -51,21 +51,16 @@ function ArticleForm({ fetchArticles }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:8090/api/v1/articles", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(article),
-    });
-
-    if (response.ok) {
-      alert("success");
-      fetchArticles();
-      setArticle({ subject: "", content: "" });
-    } else {
-      alert("fail");
-    }
+    await api
+      .post("/articles", article)
+      .then(function (res) {
+        alert("success");
+        fetchArticles();
+        setArticle({ subject: "", content: "" });
+      })
+      .catch(function (err) {
+        alert("fail");
+      });
   };
 
   const handleChange = (e) => {
