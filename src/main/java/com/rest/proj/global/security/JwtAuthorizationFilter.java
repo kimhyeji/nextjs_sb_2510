@@ -1,26 +1,21 @@
 package com.rest.proj.global.security;
 
 import com.rest.proj.domain.member.service.MemberService;
+import com.rest.proj.global.rq.Rq;
 import com.rest.proj.global.rsdata.RsData;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.http.ResponseCookie;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
-    private final HttpServletRequest req;
-    private final HttpServletResponse resp;
     private final MemberService memberService;
+    private final Rq rq;
 
     @Override
     @SneakyThrows
@@ -30,46 +25,23 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String accessToken = _getCookie("accessToken");
+        String accessToken = rq.getCookie("accessToken");
 
         // accessToken 검증 or refreshToken 발급
         if (!accessToken.isBlank()) {
-            if ( !memberService.validateToken(accessToken) ) {
-                String refreshToken = _getCookie("refreshToken");
+            if (!memberService.validateToken(accessToken)) {
+                String refreshToken = rq.getCookie(("refreshToken"));
                 RsData<String> rs = memberService.refreshAccessToken(refreshToken);
 
-                _addHeaderCookie("accessToken", rs.getData());
+                rq.setCrossDomainCookie("accessToken", rs.getData());
             }
             // SecurityUser 가져오기
             SecurityUser securityUser = memberService.getUserFromAccessToken(accessToken);
 
-            // 인가 처리
-            SecurityContextHolder.getContext().setAuthentication(securityUser.getAuthentication());
+            // 로그인 처리
+            rq.setLogin(securityUser);
         }
 
         filterChain.doFilter(request, response);
     }
-
-    private void _addHeaderCookie(String tokenName, String token) {
-        ResponseCookie cookie = ResponseCookie
-                .from(tokenName, token)
-                .path("/")
-                .sameSite("None")
-                .secure(true)
-                .httpOnly(true)
-                .build();
-
-        resp.addHeader("Set-Cookie", cookie.toString());
-    }
-
-    private String _getCookie(String name){
-        Cookie[] cookies = req.getCookies();
-
-        return Arrays.stream(cookies)
-                .filter(cookie -> cookie.getName().equals(name))
-                .findFirst()
-                .map(Cookie::getValue)
-                .orElse("");
-    }
-
 }
