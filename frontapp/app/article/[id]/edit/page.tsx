@@ -8,9 +8,14 @@ export default function ArticleEdit() {
   const params = useParams();
   const router = useRouter();
   const [article, setArticle] = useState({ subject: "", content: "" });
+  const [isLoading, setIsloading] = useState(false);
 
   useEffect(() => {
-    api
+    fetchArticle();
+  }, []);
+
+  const fetchArticle = async () => {
+    await api
       .get("/members/me")
       .then((res) => console.log(res))
       .catch((err) => {
@@ -19,13 +24,12 @@ export default function ArticleEdit() {
         router.push("/member/login");
       });
 
-    fetchArticle();
-  }, []);
-
-  const fetchArticle = () => {
-    api
+    await api
       .get(`/articles/${params.id}`)
-      .then((response) => setArticle(response.data.data.article))
+      .then((response) => {
+        setArticle(response.data.data.article);
+        setIsloading(true);
+      })
       .catch((err) => console.log(err));
   };
 
@@ -50,29 +54,35 @@ export default function ArticleEdit() {
 
   return (
     <>
-      <h4>게시물 수정</h4>
-      <form onSubmit={handleSubmit}>
-        <label>
-          제목 :
-          <input
-            type="text"
-            name="subject"
-            onChange={handleChange}
-            value={article.subject}
-          />
-        </label>
-        <br />
-        <label>
-          내용 :
-          <input
-            type="text"
-            name="content"
-            onChange={handleChange}
-            value={article.content}
-          />
-        </label>
-        <input type="submit" value="수정" />
-      </form>
+      {isLoading ? (
+        <>
+          <h4>게시물 수정</h4>
+          <form onSubmit={handleSubmit}>
+            <label>
+              제목 :
+              <input
+                type="text"
+                name="subject"
+                onChange={handleChange}
+                value={article.subject}
+              />
+            </label>
+            <br />
+            <label>
+              내용 :
+              <input
+                type="text"
+                name="content"
+                onChange={handleChange}
+                value={article.content}
+              />
+            </label>
+            <input type="submit" value="수정" />
+          </form>
+        </>
+      ) : (
+        <></>
+      )}
     </>
   );
 }
