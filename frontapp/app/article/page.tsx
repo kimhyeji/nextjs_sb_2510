@@ -26,7 +26,7 @@ export default function Article() {
     <>
       <ArticleForm fetchArticles={fetchArticles} />
 
-      <h4>번호 / 제목 / 생성일</h4>
+      <h4>번호 / 제목 / 작성자 / 생성일 / 삭제여부</h4>
       {articles.length == 0 ? (
         <p>현재 게시물이 없습니다.</p>
       ) : (
@@ -35,7 +35,7 @@ export default function Article() {
             <li key={article.id}>
               {article.id} /
               <Link href={`/article/${article.id}`}>{article.subject}</Link> /
-              {article.createdDate}
+              {article.author} / {article.createdDate}
               <button onClick={() => handleDelete(article.id)}>삭제</button>
             </li>
           ))}
