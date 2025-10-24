@@ -30,7 +30,7 @@ public class ApiV1memberController {
     @Getter
     @AllArgsConstructor
     public static class LoginResponseBody {
-        private MemberDto memberDto;
+        private MemberDto member;
     }
 
     @PostMapping("/login")
@@ -47,7 +47,7 @@ public class ApiV1memberController {
     @Getter
     @AllArgsConstructor
     public static class MemberResponseBody {
-        private  final MemberDto memberDto;
+        private  final MemberDto member;
     }
 
     @GetMapping("/me")
