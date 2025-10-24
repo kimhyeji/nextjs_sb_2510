@@ -10,6 +10,15 @@ export default function ArticleEdit() {
   const [article, setArticle] = useState({ subject: "", content: "" });
 
   useEffect(() => {
+    api
+      .get("/members/me")
+      .then((res) => console.log(res))
+      .catch((err) => {
+        console.log(err);
+        alert("로그인 후 이용해주세요");
+        router.push("/member/login");
+      });
+
     fetchArticle();
   }, []);
 

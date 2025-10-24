@@ -8,7 +8,10 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await api.post("/members/login", user);
+    await api
+      .post("/members/login", user)
+      .then(() => alert("success"))
+      .catch((err) => console.log(err));
   };
 
   const handleChange = (e) => {

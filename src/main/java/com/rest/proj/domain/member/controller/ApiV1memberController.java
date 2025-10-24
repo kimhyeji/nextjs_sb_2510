@@ -1,6 +1,7 @@
 package com.rest.proj.domain.member.controller;
 
 import com.rest.proj.domain.member.dto.MemberDto;
+import com.rest.proj.domain.member.entity.Member;
 import com.rest.proj.domain.member.service.MemberService;
 import com.rest.proj.global.rq.Rq;
 import com.rest.proj.global.rsdata.RsData;
@@ -9,7 +10,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -44,9 +44,21 @@ public class ApiV1memberController {
         return RsData.of(authAndMakeTokensRs.getResultCode(), authAndMakeTokensRs.getMsg(), new LoginResponseBody(new MemberDto(authAndMakeTokensRs.getData().getMember())));
     }
 
+    @Getter
+    @AllArgsConstructor
+    public static class MemberResponseBody {
+        private  final MemberDto memberDto;
+    }
+
     @GetMapping("/me")
-    public String me() {
-        return "내 정보";
+    public RsData<MemberResponseBody> me() {
+        Member member = rq.getMember();
+
+        return RsData.of(
+                "200",
+                "내 정보 조회 성공",
+                new MemberResponseBody(new MemberDto(member))
+        );
     }
 
     @PostMapping("/logout")
