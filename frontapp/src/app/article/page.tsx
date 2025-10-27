@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import api from '@/src/utils/api'
 import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query'
 
@@ -58,18 +58,22 @@ export default function Article() {
 function ArticleForm() {
   const [article, setArticle] = useState({ subject: '', content: '' })
 
+  const queryClient = useQueryClient()
+  const mutation = useMutation({
+    mutationFn: (newArticle) => api.post('/articles', newArticle),
+    onSuccess: () => {
+      alert('success')
+      setArticle({ subject: '', content: '' })
+      queryClient.invalidateQueries({ queryKey: ['articles'] })
+    },
+    onError: () => {
+      alert('fail')
+    },
+  })
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-
-    await api
-      .post('/articles', article)
-      .then(function (res) {
-        alert('success')
-        setArticle({ subject: '', content: '' })
-      })
-      .catch(function (err) {
-        alert('fail')
-      })
+    mutation.mutate(article)
   }
 
   const handleChange = (e) => {
