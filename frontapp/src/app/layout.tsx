@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import Link from 'next/link'
+import ReactQueryProviders from '@/src/utils/ReactQueryProviders'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -21,7 +22,7 @@ export default function RootLayout({
           <Link href="/article">게시판</Link>
           <Link href="/member/login">로그인</Link>
         </nav>
-        {children}
+        <ReactQueryProviders>{children}</ReactQueryProviders>
       </body>
     </html>
   )

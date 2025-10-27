@@ -1,6 +1,6 @@
 'use client'
 
-import api from '@/app/utils/api'
+import api from '@/src/utils/api'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 

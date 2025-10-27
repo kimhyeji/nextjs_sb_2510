@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import api from '@/app/utils/api'
+import api from '@/src/utils/api'
 
 export default function ArticleDetail() {
   const params = useParams()

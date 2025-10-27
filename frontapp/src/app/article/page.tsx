@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import api from '@/app/utils/api'
+import api from '@/src/utils/api'
 
 export default function Article() {
   const [articles, setArticles] = useState([])
