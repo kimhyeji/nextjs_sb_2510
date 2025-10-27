@@ -3,49 +3,59 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import api from '@/src/utils/api'
+import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query'
 
 export default function Article() {
-  const [articles, setArticles] = useState([])
-
-  useEffect(() => {
-    fetchArticles()
-  }, [])
-
-  const fetchArticles = () => {
-    api
-      .get('/articles')
-      .then((response) => setArticles(response.data.data.articles))
-      .catch((err) => console.log(err))
+  const getArticles = async () => {
+    return await api.get('/articles').then((res) => res.data.data.articles)
   }
 
-  const handleDelete = async (id) => {
-    await api.delete(`/articles/${id}`).then(() => fetchArticles())
+  const { isLoading, error, data } = useQuery({
+    queryKey: ['articles'],
+    queryFn: getArticles,
+  })
+
+  const deleteArticle = async (id) => {
+    await api.delete(`/articles/${id}`)
   }
 
-  return (
-    <>
-      <ArticleForm fetchArticles={fetchArticles} />
+  const queryClient = useQueryClient()
+  const mutation = useMutation({
+    mutationFn: deleteArticle,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['articles'] })
+    },
+  })
 
-      <h4>번호 / 제목 / 작성자 / 생성일 / 삭제여부</h4>
-      {articles.length == 0 ? (
-        <p>현재 게시물이 없습니다.</p>
-      ) : (
-        <ul>
-          {articles.map((article) => (
-            <li key={article.id}>
-              {article.id} /
-              <Link href={`/article/${article.id}`}>{article.subject}</Link> /
-              {article.author} / {article.createdDate}
-              <button onClick={() => handleDelete(article.id)}>삭제</button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </>
-  )
+  if (error) console.log(error)
+
+  if (isLoading) <>Loading....</>
+
+  if (data) {
+    return (
+      <>
+        <ArticleForm />
+
+        <h4>번호 / 제목 / 작성자 / 생성일 / 삭제여부</h4>
+        {data.length == 0 ? (
+          <p>현재 게시물이 없습니다.</p>
+        ) : (
+          <ul>
+            {data.map((row) => (
+              <li key={row.id}>
+                {row.id} /<Link href={`/article/${row.id}`}>{row.subject}</Link>{' '}
+                /{row.author} / {row.createdDate}
+                <button onClick={() => mutation.mutate(row.id)}>삭제</button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </>
+    )
+  }
 }
 
-function ArticleForm({ fetchArticles }) {
+function ArticleForm() {
   const [article, setArticle] = useState({ subject: '', content: '' })
 
   const handleSubmit = async (e) => {
@@ -55,7 +65,6 @@ function ArticleForm({ fetchArticles }) {
       .post('/articles', article)
       .then(function (res) {
         alert('success')
-        fetchArticles()
         setArticle({ subject: '', content: '' })
       })
       .catch(function (err) {

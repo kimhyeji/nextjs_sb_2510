@@ -27,8 +27,11 @@ export default function ArticleDetail() {
     return (
       <>
         <h4>게시물 상세 {params.id}번</h4>
-        <div>{data.subject}</div>
-        <div>{data.author}</div>
+        <div>작성자 : {data.author}</div>
+        <div>제목 : {data.subject}</div>
+        <div>내용 : {data.content}</div>
+        <div>작성일 : {data.createdDate}</div>
+        <div>수정일 : {data.modifiedDate}</div>
         <Link href={`/article/${params.id}/edit`}>수정</Link>
       </>
     )
