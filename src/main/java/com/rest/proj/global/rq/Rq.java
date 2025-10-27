@@ -38,14 +38,14 @@ public class Rq {
     public String getCookie(String name) {
         Cookie[] cookies = req.getCookies();
 
-        return  Arrays.stream(cookies)
+        return Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().equals(name))
                 .findFirst()
                 .map(Cookie::getValue)
                 .orElse("");
     }
 
-    public Member getMember () {
+    public Member getMember() {
         if (isLogout()) return null;
         if (member == null) {
             member = entityManager.getReference(Member.class, getUser().getId());

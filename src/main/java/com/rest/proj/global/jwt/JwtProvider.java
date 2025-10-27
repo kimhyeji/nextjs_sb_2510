@@ -46,7 +46,7 @@ public class JwtProvider {
 
 
     // 토큰 생성
-    public String genToken (Member member, int seconds) {
+    public String genToken(Member member, int seconds) {
         Map<String, Object> claims = new HashMap<>();
 
         claims.put("id", member.getId());

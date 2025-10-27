@@ -1,14 +1,14 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import api from "../utils/api";
+import { useEffect, useState } from 'react'
+import api from '../utils/api'
 
 export default function About() {
-  const [member, setMember] = useState({});
+  const [member, setMember] = useState({})
 
   useEffect(() => {
-    api.get("/members/me").then((res) => setMember(res.data.data.memberDto));
-  }, []);
+    api.get('/members/me').then((res) => setMember(res.data.data.memberDto))
+  }, [])
 
   return (
     <>
@@ -18,5 +18,5 @@ export default function About() {
         <li>username : {member.username}</li>
       </ul>
     </>
-  );
+  )
 }

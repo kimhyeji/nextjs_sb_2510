@@ -7,11 +7,11 @@ import java.time.LocalDateTime;
 
 @Getter
 public class ArticleDto {
-    private Long id;
-    private String subject;
-    private String author;
-    private LocalDateTime createdDate;
-    private LocalDateTime modifiedDate;
+    private final Long id;
+    private final String subject;
+    private final String author;
+    private final LocalDateTime createdDate;
+    private final LocalDateTime modifiedDate;
 
     public ArticleDto(Article article) {
         this.id = article.getId();

@@ -47,7 +47,7 @@ public class ApiV1memberController {
     @Getter
     @AllArgsConstructor
     public static class MemberResponseBody {
-        private  final MemberDto member;
+        private final MemberDto member;
     }
 
     @GetMapping("/me")

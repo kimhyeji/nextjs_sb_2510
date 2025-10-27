@@ -1,26 +1,26 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import api from "@/app/utils/api";
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import api from '@/app/utils/api'
 
 export default function Article() {
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState([])
 
   useEffect(() => {
-    fetchArticles();
-  }, []);
+    fetchArticles()
+  }, [])
 
   const fetchArticles = () => {
     api
-      .get("/articles")
+      .get('/articles')
       .then((response) => setArticles(response.data.data.articles))
-      .catch((err) => console.log(err));
-  };
+      .catch((err) => console.log(err))
+  }
 
   const handleDelete = async (id) => {
-    await api.delete(`/articles/${id}`).then(() => fetchArticles());
-  };
+    await api.delete(`/articles/${id}`).then(() => fetchArticles())
+  }
 
   return (
     <>
@@ -42,31 +42,31 @@ export default function Article() {
         </ul>
       )}
     </>
-  );
+  )
 }
 
 function ArticleForm({ fetchArticles }) {
-  const [article, setArticle] = useState({ subject: "", content: "" });
+  const [article, setArticle] = useState({ subject: '', content: '' })
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     await api
-      .post("/articles", article)
+      .post('/articles', article)
       .then(function (res) {
-        alert("success");
-        fetchArticles();
-        setArticle({ subject: "", content: "" });
+        alert('success')
+        fetchArticles()
+        setArticle({ subject: '', content: '' })
       })
       .catch(function (err) {
-        alert("fail");
-      });
-  };
+        alert('fail')
+      })
+  }
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setArticle({ ...article, [name]: value });
-  };
+    const { name, value } = e.target
+    setArticle({ ...article, [name]: value })
+  }
 
   return (
     <>
@@ -94,5 +94,5 @@ function ArticleForm({ fetchArticles }) {
         <input type="submit" value="등록" />
       </form>
     </>
-  );
+  )
 }
